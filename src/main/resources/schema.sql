@@ -1,4 +1,4 @@
-CREATE DATABASE mothers3;
+CREATE DATABASE IF NOT EXISTS mothers3;
 USE mothers3;
 
 CREATE TABLE mae(
