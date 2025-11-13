@@ -20,7 +20,7 @@ CREATE TABLE encontro(
 
 CREATE TABLE servico(
 	id_servico INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100)
+    nome VARCHAR(100) UNIQUE
 );
 
 CREATE TABLE rel(
@@ -32,3 +32,6 @@ CREATE TABLE rel(
     FOREIGN KEY (id_encontro) REFERENCES encontro(id_encontro),
     FOREIGN KEY (id_servico) REFERENCES servico(id_servico)
 );
+
+INSERT INTO servico (nome)
+VALUES ('Música'), ('Recepção das mães'), ('Acolhida'), ('Terço'), ('Formação'), ('Momento oracional'), ('Proclamação da vitória'), ('Sorteio das flores'), ('Encerramento'), ('Arrumação capela'), ('Queima dos pedidos');
