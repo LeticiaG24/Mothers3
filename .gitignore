@@ -1,0 +1,12 @@
+/.classpath
+/.project
+/.settings/
+
+/bin/
+*.class
+
+.idea/
+*.iml
+/target/
+*.log
+/uploads
