@@ -93,4 +93,24 @@ public class EncontroDAO {
 
         return encontro; 
     }
+	
+	//UPDATE
+	public void update(Encontro encontro) {
+        String sql = "UPDATE encontro SET data_encontro = ?, id_mae = ?, descricao = ?, andamento = ?  WHERE id = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        	stmt.setDate(1, Date.valueOf(encontro.getData()));
+            stmt.setInt(2, encontro.getIdMaeResp());
+            stmt.setString(3, encontro.getDescricao());
+            stmt.setString(4, encontro.getStatus());
+            stmt.setInt(5, encontro.getId());
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
