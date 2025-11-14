@@ -1,15 +1,15 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Mae {
 	private int id;
 	private String nome;
 	private String telefone;
 	private String endereco;
-	private Date dataAniversario;
+	private LocalDate dataAniversario;
 	
-	public Mae(int id, String nome, String telefone, String endereco, Date dataAniversario) {
+	public Mae(int id, String nome, String telefone, String endereco, LocalDate dataAniversario) {
 		this.id = id;
 		this.nome = nome;
 		this.telefone = telefone;
@@ -49,11 +49,11 @@ public class Mae {
 		this.endereco = endereco;
 	}
 
-	public Date getDataAniversario() {
+	public LocalDate getDataAniversario() {
 		return dataAniversario;
 	}
 
-	public void setDataAniversario(Date dataAniversario) {
+	public void setDataAniversario(LocalDate dataAniversario) {
 		this.dataAniversario = dataAniversario;
 	}
 	

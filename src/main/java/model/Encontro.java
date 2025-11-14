@@ -1,15 +1,15 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Encontro {
 	private int id;
-	private Date data;
+	private LocalDate data;
 	private String descricao;
 	private String status;
 	private int idMaeResp;
 	
-	public Encontro(int id, Date data, String descricao, String status, int idMaeResp){
+	public Encontro(int id, LocalDate data, String descricao, String status, int idMaeResp){
 		this.id=id;
 		this.data=data;
 		this.descricao=descricao;
@@ -25,11 +25,11 @@ public class Encontro {
 		this.id = id;
 	}
 
-	public Date getData() {
+	public LocalDate getData() {
 		return data;
 	}
 
-	public void setData(Date data) {
+	public void setData(LocalDate data) {
 		this.data = data;
 	}
 
