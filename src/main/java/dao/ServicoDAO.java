@@ -22,7 +22,7 @@ public class ServicoDAO {
 
             while (rs.next()) {
                 Servico servico = new Servico(
-                    rs.getInt("id"),
+                    rs.getInt("id_servico"),
                     rs.getString("nome")
                 );
 
@@ -37,7 +37,7 @@ public class ServicoDAO {
     }
 	
 	public Servico findById(int id) {
-        String sql = "SELECT * FROM servico WHERE id = ?";
+        String sql = "SELECT * FROM servico WHERE id_servico = ?";
         Servico servico = null;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -48,7 +48,7 @@ public class ServicoDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     servico = new Servico(
-                		rs.getInt("id"),
+                		rs.getInt("id_servico"),
                         rs.getString("nome")
                     );
                 }

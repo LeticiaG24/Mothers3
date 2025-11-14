@@ -49,11 +49,11 @@ public class MaeDAO {
 
             while (rs.next()) {
                 Mae mae = new Mae(
-                    rs.getInt("id"),
+                    rs.getInt("id_mae"),
                     rs.getString("nome"),
                     rs.getString("telefone"),
                     rs.getString("endereco"),
-                    rs.getDate("dataAniversaro").toLocalDate()
+                    rs.getDate("dataAniversario").toLocalDate()
                 );
 
                 lista.add(mae);
@@ -67,7 +67,7 @@ public class MaeDAO {
     }
 	
 	public Mae findById(int id) {
-        String sql = "SELECT * FROM mae WHERE id = ?";
+        String sql = "SELECT * FROM mae WHERE id_mae = ?";
         Mae mae = null;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -78,11 +78,11 @@ public class MaeDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     mae = new Mae(
-	            		rs.getInt("id"),
+	            		rs.getInt("id_mae"),
 	                    rs.getString("nome"),
 	                    rs.getString("telefone"),
 	                    rs.getString("endereco"),
-	                    rs.getDate("dataAniversaro").toLocalDate()
+	                    rs.getDate("dataAniversario").toLocalDate()
                     );
                 }
             }

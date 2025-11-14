@@ -41,9 +41,9 @@ public class RelDAO {
 
             while (rs.next()) {
                 Rel rel = new Rel(
-                    rs.getInt("idMae"),
-                    rs.getInt("idEncontro"),
-                    rs.getInt("idServico")
+                    rs.getInt("id_mae"),
+                    rs.getInt("id_encontro"),
+                    rs.getInt("id_servico")
                 );
 
                 lista.add(rel);
