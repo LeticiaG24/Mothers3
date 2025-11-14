@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import model.Servico;
 import model.Mae;
@@ -17,7 +18,9 @@ public class TXTExporter {
 		FileWriter arq = new FileWriter(filePath);
 		BufferedWriter escrita = new BufferedWriter(arq);
 		
-		escrita.write("Data do encontro: " + dataEncontro.toString());
+		escrita.write("Data do encontro: " + dataEncontro.format(DateTimeFormatter.ofPattern("dd/MM")));
+		escrita.newLine();
+		escrita.write("Serviços:");
 		escrita.newLine();
 		
 		MaeDAO maeDAO = new MaeDAO();
