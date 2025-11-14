@@ -12,15 +12,13 @@ CREATE TABLE mae(
 CREATE TABLE encontro(
 	id_encontro INT PRIMARY KEY AUTO_INCREMENT,
     data_encontro DATE NOT NULL,
-    id_mae INT NOT NULL,
-    FOREIGN KEY (id_mae) REFERENCES mae(id_mae),
-    descricao VARCHAR(200),
     andamento VARCHAR(20)
 );
 
 CREATE TABLE servico(
 	id_servico INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) UNIQUE
+    nome VARCHAR(100) UNIQUE,
+    descricao VARCHAR(200)
 );
 
 CREATE TABLE rel(

@@ -23,7 +23,8 @@ public class ServicoDAO {
             while (rs.next()) {
                 Servico servico = new Servico(
                     rs.getInt("id_servico"),
-                    rs.getString("nome")
+                    rs.getString("nome"),
+                    rs.getString("descricao")
                 );
 
                 lista.add(servico);
@@ -49,7 +50,8 @@ public class ServicoDAO {
                 if (rs.next()) {
                     servico = new Servico(
                 		rs.getInt("id_servico"),
-                        rs.getString("nome")
+                        rs.getString("nome"),
+                        rs.getString("descricao")
                     );
                 }
             }

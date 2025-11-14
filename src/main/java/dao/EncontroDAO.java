@@ -15,15 +15,13 @@ import model.Encontro;
 public class EncontroDAO {
 	//CREATE
 	public void insert(Encontro encontro) {
-        String sql = "INSERT INTO encontro(data_encontro, id_mae, descricao, andamento) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO encontro(data_encontro, andamento) VALUES (?, ?)";
         
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             stmt.setDate(1, Date.valueOf(encontro.getData()));
-            stmt.setInt(2, encontro.getIdMaeResp());
-            stmt.setString(3, encontro.getDescricao());
-            stmt.setString(4, encontro.getStatus());
+            stmt.setString(2, encontro.getStatus());
 
             stmt.executeUpdate();
 
@@ -49,11 +47,9 @@ public class EncontroDAO {
 
             while (rs.next()) {
                 Encontro encontro = new Encontro(
-                    rs.getInt("id"),
+                    rs.getInt("id_encontro"),
                     rs.getDate("data").toLocalDate(),
-                    rs.getString("descricao"),
-                    rs.getString("status"),
-                    rs.getInt("idMaeResp")
+                    rs.getString("status")
                 );
 
                 lista.add(encontro);
@@ -78,11 +74,9 @@ public class EncontroDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     encontro = new Encontro(
-                		rs.getInt("id"),
-                        rs.getDate("data").toLocalDate(),
-                        rs.getString("descricao"),
-                        rs.getString("status"),
-                        rs.getInt("idMaeResp")
+                    		rs.getInt("id_encontro"),
+                            rs.getDate("data").toLocalDate(),
+                            rs.getString("status")
                     );
                 }
             }
@@ -96,16 +90,14 @@ public class EncontroDAO {
 	
 	//UPDATE
 	public void update(Encontro encontro) {
-        String sql = "UPDATE encontro SET data_encontro = ?, id_mae = ?, descricao = ?, andamento = ?  WHERE id = ?";
+        String sql = "UPDATE encontro SET data_encontro = ?, andamento = ?  WHERE id_encontro = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
         	stmt.setDate(1, Date.valueOf(encontro.getData()));
-            stmt.setInt(2, encontro.getIdMaeResp());
-            stmt.setString(3, encontro.getDescricao());
-            stmt.setString(4, encontro.getStatus());
-            stmt.setInt(5, encontro.getId());
+            stmt.setString(2, encontro.getStatus());
+            stmt.setInt(3, encontro.getId());
 
             stmt.executeUpdate();
 

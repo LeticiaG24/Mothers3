@@ -5,16 +5,12 @@ import java.time.LocalDate;
 public class Encontro {
 	private int id;
 	private LocalDate data;
-	private String descricao;
 	private String status;
-	private int idMaeResp;
 	
-	public Encontro(int id, LocalDate data, String descricao, String status, int idMaeResp){
+	public Encontro(int id, LocalDate data, String status){
 		this.id=id;
 		this.data=data;
-		this.descricao=descricao;
 		this.status=status;
-		this.idMaeResp=idMaeResp;
 	}
 
 	public int getId() {
@@ -33,14 +29,6 @@ public class Encontro {
 		this.data = data;
 	}
 
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -49,13 +37,5 @@ public class Encontro {
 		this.status = status;
 	}
 
-	public int getIdMaeResp() {
-		return idMaeResp;
-	}
-
-	public void setIdMaeResp(int idMaeResp) {
-		this.idMaeResp = idMaeResp;
-	}
-	
 	
 }
