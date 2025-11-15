@@ -14,9 +14,10 @@ import model.Rel;
 import dao.MaeDAO;
 import dao.ServicoDAO;
 import dao.EncontroDAO;
+import dao.RelDAO;
 
 public class TXTExporter {
-	public void arquivo(int id_encontro, List<Rel> rel, String filePath) throws IOException {
+	public void arquivo(int id_encontro, String filePath) throws IOException {
 		FileWriter arq = new FileWriter(filePath);
 		BufferedWriter escrita = new BufferedWriter(arq);
 		
@@ -31,6 +32,8 @@ public class TXTExporter {
 		MaeDAO maeDAO = new MaeDAO();
 		ServicoDAO servicoDAO = new ServicoDAO();
 		
+		RelDAO relDAO = new RelDAO();
+		List<Rel> rel = relDAO.listAll();
 		rel = rel.stream()
 				.filter(relEncontro -> relEncontro.getIdEncontro() == id_encontro)
 				.collect(Collectors.toList());
