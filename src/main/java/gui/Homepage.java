@@ -1,7 +1,10 @@
 package gui;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.Servico;
+import util.TXTExporter;
 import model.Encontro;
 import model.Mae;
 import model.Rel;
@@ -33,6 +37,7 @@ public class Homepage extends Application {
 	EncontroDAO encontroDAO = new EncontroDAO();
 	RelDAO relDAO = new RelDAO();
 	ServicoDAO servicoDAO = new ServicoDAO();
+	TXTExporter txtExporter = new TXTExporter();
 	
 	//Tabela mães
 	private TableView<Mae> tabelaMaes;
@@ -195,9 +200,33 @@ public class Homepage extends Application {
 	    
 	    tabelaRel.getColumns().addAll(colServico, colMae);
 	    
-	    root.getChildren().addAll(lblData, lblStatus, tabelaRel);
+	    Button btnExportar = new Button("Exportar relatório");
+	    btnExportar.setOnAction(e -> {
+	    	javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+    		fileChooser.setTitle("Salvar relatório PDF");
+    		
+    		String fileName = "relatorio_" + encontro.getData().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".txt";
+    		fileChooser.setInitialFileName(fileName);
+    		
+    		File file = fileChooser.showSaveDialog(tabelaRel.getScene().getWindow());
+            if (file == null) {
+                System.out.println("Operação cancelada pelo usuário.");
+                return;
+            }
+            
+            try {
+				txtExporter.arquivo(
+					    encontro.getId(),
+					    file.getAbsolutePath()
+					);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+	    });
+	    
+	    root.getChildren().addAll(lblData, lblStatus, tabelaRel, btnExportar);
 
-	    Scene scene = new Scene(root, 300, 200);
+	    Scene scene = new Scene(root, 600, 400);
 	    stage.setScene(scene);
 	    stage.show();
 	}

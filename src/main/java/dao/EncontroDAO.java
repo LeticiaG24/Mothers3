@@ -63,7 +63,7 @@ public class EncontroDAO {
     }
 	
 	public Encontro findById(int id) {
-        String sql = "SELECT * FROM encontro WHERE id = ?";
+        String sql = "SELECT * FROM encontro WHERE id_encontro = ?";
         Encontro encontro = null;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -75,8 +75,8 @@ public class EncontroDAO {
                 if (rs.next()) {
                     encontro = new Encontro(
                     		rs.getInt("id_encontro"),
-                            rs.getDate("data").toLocalDate(),
-                            rs.getString("status")
+                            rs.getDate("data_encontro").toLocalDate(),
+                            rs.getString("andamento")
                     );
                 }
             }
