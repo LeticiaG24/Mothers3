@@ -5,28 +5,50 @@ import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import dao.EncontroDAO;
 import dao.MaeDAO;
+import dao.RelDAO;
+import dao.ServicoDAO;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import javafx.util.Callback;
+import model.Servico;
+import model.Encontro;
 import model.Mae;
+import model.Rel;
 
 public class Homepage extends Application {
 	MaeDAO maeDAO = new MaeDAO();
+	EncontroDAO encontroDAO = new EncontroDAO();
+	RelDAO relDAO = new RelDAO();
+	ServicoDAO servicoDAO = new ServicoDAO();
+	
 	//Tabela mães
 	private TableView<Mae> tabelaMaes;
 	private ObservableList<Mae> dadosMaes;
 	//Tabela mães aniversariantes
 	private TableView<Mae> tabelaMaesNiver;
 	private ObservableList<Mae> dadosMaesNiver;
+	//Tabela próximos encontros
+	private TableView<Encontro> tabelaEncontros;
+	private ObservableList<Encontro> dadosEncontros;
+	//Tabela de serviços do encontro
+	private TableView<Rel> tabelaRel;
+	private ObservableList<Rel> dadosRel;
 	
 	public void start(Stage stage) {
+		
 		//Criando a cena
 		VBox raiz = new VBox();
 		Scene cena = new Scene(raiz, 800, 600);
@@ -70,8 +92,48 @@ public class Homepage extends Application {
         
         tabelaMaesNiver.getColumns().addAll(colNomeA, colTelefoneA, colAniversarioA, colEnderecoA);
         
+        //Tabela próximos encontros
+        tabelaEncontros = new TableView();
+        carregarTabelaEncontros();
+        TableColumn<Encontro, String> colDataEncontro = new TableColumn<>("Data");
+        colDataEncontro.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getData().toString()));
+        
+        TableColumn<Encontro, String> colStatusEncontro = new TableColumn<>("Status");
+        colStatusEncontro.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getStatus()));
+        
+        TableColumn<Encontro, Void> colAcoes = new TableColumn<>("Editar");
+        Callback<TableColumn<Encontro, Void>, TableCell<Encontro, Void>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<Encontro, Void> call(final TableColumn<Encontro, Void> param) {
+                return new TableCell<>() {
+
+                    private final Button btn = new Button("✏");
+
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            Encontro encontro = getTableView().getItems().get(getIndex());
+                            abrirTelaDetalhes(encontro);
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                        }
+                    }
+                };
+            }
+        };
+        colAcoes.setCellFactory(cellFactory);
+        tabelaEncontros.getColumns().addAll(colDataEncontro, colStatusEncontro, colAcoes);
+        
+        
         //Adicionando elementos a cena
-        raiz.getChildren().addAll(tabelaMaes, tabelaMaesNiver);
+        raiz.getChildren().addAll(tabelaMaes, tabelaMaesNiver, tabelaEncontros);
 	}
 	
 	
@@ -92,7 +154,63 @@ public class Homepage extends Application {
         dadosMaesNiver = FXCollections.observableArrayList(filtrada);
         tabelaMaesNiver.setItems(dadosMaesNiver);
     }
+	private void carregarTabelaEncontros() {
+		List<Encontro> todos = encontroDAO.listAll();
+		
+		List<Encontro> filtrada = todos.stream()
+			    .filter(objeto -> objeto.getData().isAfter(LocalDate.now()))
+			    .collect(Collectors.toList());
+		
+		dadosEncontros = FXCollections.observableArrayList(filtrada);
+		tabelaEncontros.setItems(dadosEncontros);
+	}
 	
+	//Janela encontros
+	private void abrirTelaDetalhes(Encontro encontro) {
+	    Stage stage = new Stage();
+	    stage.setTitle("Detalhes do Encontro");
+
+	    VBox root = new VBox(10);
+	    root.setPadding(new Insets(15));
+
+	    Label lblData = new Label("Data: " + encontro.getData());
+	    Label lblStatus = new Label("Status: " + encontro.getStatus());
+	    
+	    tabelaRel = new TableView<>();
+	    carregarTabelaRel(encontro);
+	    TableColumn<Rel, String> colServico = new TableColumn<>("Serviço");
+	    colServico.setCellValueFactory(c -> {
+            int servicoId = c.getValue().getIdServico();
+            Servico servico = servicoDAO.findById(servicoId);
+            String servicoNome = servico.getNome();
+            return new javafx.beans.property.SimpleStringProperty(servicoNome);
+        });
+	    TableColumn<Rel, String> colMae = new TableColumn<>("Mãe responsável");
+	    colMae.setCellValueFactory(c -> {
+            int maeId = c.getValue().getIdMae();
+            Mae mae = maeDAO.findById(maeId);
+            String maeNome = mae.getNome();
+            return new javafx.beans.property.SimpleStringProperty(maeNome);
+        });
+	    
+	    tabelaRel.getColumns().addAll(colServico, colMae);
+	    
+	    root.getChildren().addAll(lblData, lblStatus, tabelaRel);
+
+	    Scene scene = new Scene(root, 300, 200);
+	    stage.setScene(scene);
+	    stage.show();
+	}
+	private void carregarTabelaRel(Encontro encontro) {
+		List<Rel> todos = relDAO.listAll();
+		
+		List<Rel> filtrada = todos.stream()
+			    .filter(objeto -> objeto.getIdEncontro()==encontro.getId())
+			    .collect(Collectors.toList());
+		
+		dadosRel = FXCollections.observableArrayList(filtrada);
+		tabelaRel.setItems(dadosRel);
+	}
 	
 	public static void main (String[]args) {
 		launch(args);

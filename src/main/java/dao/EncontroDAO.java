@@ -48,8 +48,8 @@ public class EncontroDAO {
             while (rs.next()) {
                 Encontro encontro = new Encontro(
                     rs.getInt("id_encontro"),
-                    rs.getDate("data").toLocalDate(),
-                    rs.getString("status")
+                    rs.getDate("data_encontro").toLocalDate(),
+                    rs.getString("andamento")
                 );
 
                 lista.add(encontro);
