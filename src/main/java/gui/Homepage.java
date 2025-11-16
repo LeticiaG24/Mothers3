@@ -1,22 +1,17 @@
 package gui;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import dao.EncontroDAO;
 import dao.MaeDAO;
 import dao.RelDAO;
-import dao.ServicoDAO;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -26,18 +21,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import model.Servico;
-import util.TXTExporter;
 import model.Encontro;
 import model.Mae;
-import model.Rel;
 
 public class Homepage extends Application {
 	MaeDAO maeDAO = new MaeDAO();
 	EncontroDAO encontroDAO = new EncontroDAO();
 	RelDAO relDAO = new RelDAO();
-	ServicoDAO servicoDAO = new ServicoDAO();
-	TXTExporter txtExporter = new TXTExporter();
 	
 	//Tabela mães
 	private TableView<Mae> tabelaMaes;
@@ -48,9 +38,6 @@ public class Homepage extends Application {
 	//Tabela próximos encontros
 	private TableView<Encontro> tabelaEncontros;
 	private ObservableList<Encontro> dadosEncontros;
-	//Tabela de serviços do encontro
-	private TableView<Rel> tabelaRel;
-	private ObservableList<Rel> dadosRel;
 	
 	public void start(Stage stage) {
 		
@@ -172,73 +159,8 @@ public class Homepage extends Application {
 	
 	//Janela encontros
 	private void abrirTelaDetalhes(Encontro encontro) {
-	    Stage stage = new Stage();
-	    stage.setTitle("Detalhes do Encontro");
-
-	    VBox root = new VBox(10);
-	    root.setPadding(new Insets(15));
-
-	    Label lblData = new Label("Data: " + encontro.getData());
-	    Label lblStatus = new Label("Status: " + encontro.getStatus());
-	    
-	    tabelaRel = new TableView<>();
-	    carregarTabelaRel(encontro);
-	    TableColumn<Rel, String> colServico = new TableColumn<>("Serviço");
-	    colServico.setCellValueFactory(c -> {
-            int servicoId = c.getValue().getIdServico();
-            Servico servico = servicoDAO.findById(servicoId);
-            String servicoNome = servico.getNome();
-            return new javafx.beans.property.SimpleStringProperty(servicoNome);
-        });
-	    TableColumn<Rel, String> colMae = new TableColumn<>("Mãe responsável");
-	    colMae.setCellValueFactory(c -> {
-            int maeId = c.getValue().getIdMae();
-            Mae mae = maeDAO.findById(maeId);
-            String maeNome = mae.getNome();
-            return new javafx.beans.property.SimpleStringProperty(maeNome);
-        });
-	    
-	    tabelaRel.getColumns().addAll(colServico, colMae);
-	    
-	    Button btnExportar = new Button("Exportar relatório");
-	    btnExportar.setOnAction(e -> {
-	    	javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-    		fileChooser.setTitle("Salvar relatório PDF");
-    		
-    		String fileName = "relatorio_" + encontro.getData().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + ".txt";
-    		fileChooser.setInitialFileName(fileName);
-    		
-    		File file = fileChooser.showSaveDialog(tabelaRel.getScene().getWindow());
-            if (file == null) {
-                System.out.println("Operação cancelada pelo usuário.");
-                return;
-            }
-            
-            try {
-				txtExporter.arquivo(
-					    encontro.getId(),
-					    file.getAbsolutePath()
-					);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-	    });
-	    
-	    root.getChildren().addAll(lblData, lblStatus, tabelaRel, btnExportar);
-
-	    Scene scene = new Scene(root, 600, 400);
-	    stage.setScene(scene);
-	    stage.show();
-	}
-	private void carregarTabelaRel(Encontro encontro) {
-		List<Rel> todos = relDAO.listAll();
-		
-		List<Rel> filtrada = todos.stream()
-			    .filter(objeto -> objeto.getIdEncontro()==encontro.getId())
-			    .collect(Collectors.toList());
-		
-		dadosRel = FXCollections.observableArrayList(filtrada);
-		tabelaRel.setItems(dadosRel);
+		TelaDetalhesEncontro telaDetalhes = new TelaDetalhesEncontro(encontro);
+	    telaDetalhes.mostrar();
 	}
 	
 	public static void main (String[]args) {
