@@ -14,6 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -165,9 +166,34 @@ public class Homepage extends Application {
         colAcoes.setCellFactory(cellFactory);
         tabelaEncontros.getColumns().addAll(colDataEncontro, colStatusEncontro, colAcoes);
         
-        
+        //Cadastro encontros
+        DatePicker dpData = new DatePicker();
+        dpData.getStyleClass().add("input");
+        dpData.setPromptText("Data");
+        dpData.setPrefWidth(250);
+        dpData.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(dpData, Priority.ALWAYS);
+		
+		ComboBox<String> cbStatus = new ComboBox<>();
+		ObservableList<String> options = FXCollections.observableArrayList(
+				"Em breve", "Concluído", "Cancelado");
+		cbStatus.setItems(options);
+		cbStatus.getStyleClass().add("input");
+        cbStatus.setPromptText("Status");
+        cbStatus.setPrefWidth(250);
+        cbStatus.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(cbStatus, Priority.ALWAYS);
+		
+        Button btnSalvarEncontro = new Button("Cadastrar");
+        btnSalvarEncontro.setOnAction(e -> {
+			Encontro encontro = new Encontro(0, dpData.getValue(), cbStatus.getValue());
+			encontroDAO.insert(encontro);
+			carregarTabelaEncontros();
+			limparCamposEvento(dpData, cbStatus);
+		});
+		
         //Adicionando elementos a cena
-        raiz.getChildren().addAll(tabelaMaes, tabelaMaesNiver, tfNome, tfEndereco, tfTelefone, dpAniversario, btnSalvarMae, tabelaEncontros);
+        raiz.getChildren().addAll(tabelaMaes, tabelaMaesNiver, tfNome, tfEndereco, tfTelefone, dpAniversario, btnSalvarMae, tabelaEncontros, dpData, cbStatus, btnSalvarEncontro);
 	}
 	
 	
@@ -194,7 +220,6 @@ public class Homepage extends Application {
 		tfEndereco.clear();
 		dpAniversario.setValue(null);
 	}
-	
 	private void carregarTabelaEncontros() {
 		List<Encontro> todos = encontroDAO.listAll();
 		
@@ -204,6 +229,10 @@ public class Homepage extends Application {
 		
 		dadosEncontros = FXCollections.observableArrayList(filtrada);
 		tabelaEncontros.setItems(dadosEncontros);
+	}
+	private void limparCamposEvento(DatePicker dpData, ComboBox<String> cbStatus) {
+		dpData.setValue(null);
+		cbStatus.setValue(null);
 	}
 	
 	//Janela encontros
