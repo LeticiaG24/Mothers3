@@ -43,6 +43,9 @@ public class Homepage extends Application {
 	//Tabela próximos encontros
 	private TableView<Encontro> tabelaEncontros;
 	private ObservableList<Encontro> dadosEncontros;
+	//Tabela encontros anteriores
+	private TableView<Encontro> tabelaEncontrosAnt;
+	private ObservableList<Encontro> dadosEncontrosAnt;
 	
 	public void start(Stage stage) {
 		
@@ -128,6 +131,8 @@ public class Homepage extends Application {
 		});
 		
         //Tabela próximos encontros
+		Label lblProximosEncontros = new Label("Nossos próximos encontros");
+		
         tabelaEncontros = new TableView();
         carregarTabelaEncontros();
         TableColumn<Encontro, String> colDataEncontro = new TableColumn<>("Data");
@@ -166,6 +171,18 @@ public class Homepage extends Application {
         colAcoes.setCellFactory(cellFactory);
         tabelaEncontros.getColumns().addAll(colDataEncontro, colStatusEncontro, colAcoes);
         
+        Label lblEncontrosAnt = new Label("Nossos encontros anteriores");
+        
+        tabelaEncontrosAnt = new TableView<Encontro>();
+        carregarTabelaEncontrosAnt();
+        TableColumn<Encontro, String> colDataEncontroAnt = new TableColumn<>("Data");
+        colDataEncontroAnt.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getData().toString()));
+        
+        TableColumn<Encontro, String> colStatusEncontroAnt = new TableColumn<>("Status");
+        colStatusEncontroAnt.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getStatus()));
+        
+        tabelaEncontrosAnt.getColumns().addAll(colDataEncontroAnt, colStatusEncontroAnt);
+        
         //Cadastro encontros
         DatePicker dpData = new DatePicker();
         dpData.getStyleClass().add("input");
@@ -193,7 +210,7 @@ public class Homepage extends Application {
 		});
 		
         //Adicionando elementos a cena
-        raiz.getChildren().addAll(tabelaMaes, tabelaMaesNiver, tfNome, tfEndereco, tfTelefone, dpAniversario, btnSalvarMae, tabelaEncontros, dpData, cbStatus, btnSalvarEncontro);
+        raiz.getChildren().addAll(tabelaMaes, tabelaMaesNiver, tfNome, tfEndereco, tfTelefone, dpAniversario, btnSalvarMae, lblProximosEncontros, tabelaEncontros, lblEncontrosAnt, tabelaEncontrosAnt, dpData, cbStatus, btnSalvarEncontro);
 	}
 	
 	
@@ -230,6 +247,17 @@ public class Homepage extends Application {
 		dadosEncontros = FXCollections.observableArrayList(filtrada);
 		tabelaEncontros.setItems(dadosEncontros);
 	}
+	private void carregarTabelaEncontrosAnt() {
+		List<Encontro> todos = encontroDAO.listAll();
+		
+		List<Encontro> filtrada = todos.stream()
+				.filter(o -> o.getData().isBefore(LocalDate.now()))
+				.collect(Collectors.toList());
+		
+		dadosEncontrosAnt = FXCollections.observableArrayList(filtrada);
+		tabelaEncontrosAnt.setItems(dadosEncontrosAnt);
+	}
+	
 	private void limparCamposEvento(DatePicker dpData, ComboBox<String> cbStatus) {
 		dpData.setValue(null);
 		cbStatus.setValue(null);
