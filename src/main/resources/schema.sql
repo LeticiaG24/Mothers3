@@ -5,7 +5,7 @@ CREATE TABLE mae(
 	id_mae INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
     endereco VARCHAR(200) NOT NULL,
-    telefone VARCHAR(14),
+    telefone VARCHAR(15),
     dataAniversario DATE NOT NULL
 );
 

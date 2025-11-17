@@ -14,10 +14,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -84,6 +88,44 @@ public class Homepage extends Application {
         
         tabelaMaesNiver.getColumns().addAll(colNomeA, colTelefoneA, colAniversarioA, colEnderecoA);
         
+        //Cadastro de mães
+        TextField tfNome = new TextField();
+        tfNome.setPromptText("Nome");
+        tfNome.setPrefWidth(250);
+        tfNome.getStyleClass().add("input");
+        tfNome.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(tfNome, Priority.ALWAYS);
+		
+		TextField tfEndereco = new TextField();
+        tfEndereco.setPromptText("Endereço");
+        tfEndereco.setPrefWidth(250);
+        tfEndereco.getStyleClass().add("input");
+        tfEndereco.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(tfEndereco, Priority.ALWAYS);
+		
+		TextField tfTelefone = new TextField();
+        tfTelefone.setPromptText("Telefone");
+        tfTelefone.setPrefWidth(250);
+        tfTelefone.getStyleClass().add("input");
+        tfTelefone.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(tfTelefone, Priority.ALWAYS);
+		
+		DatePicker dpAniversario = new DatePicker();
+        dpAniversario.getStyleClass().add("input");
+        dpAniversario.setPromptText("Data de aniversário");
+        dpAniversario.setPrefWidth(250);
+        dpAniversario.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(dpAniversario, Priority.ALWAYS);
+        
+		Button btnSalvarMae = new Button("Cadastrar");
+		btnSalvarMae.setOnAction(e -> {
+			Mae maeNova = new Mae(0, tfNome.getText(), tfTelefone.getText(), tfEndereco.getText(), dpAniversario.getValue());
+			maeDAO.insert(maeNova);
+			carregarTabelaMaes();
+			carregarTabelaMaesNiver();
+			limparCamposMaes(tfNome, tfTelefone, tfEndereco, dpAniversario);
+		});
+		
         //Tabela próximos encontros
         tabelaEncontros = new TableView();
         carregarTabelaEncontros();
@@ -125,7 +167,7 @@ public class Homepage extends Application {
         
         
         //Adicionando elementos a cena
-        raiz.getChildren().addAll(tabelaMaes, tabelaMaesNiver, tabelaEncontros);
+        raiz.getChildren().addAll(tabelaMaes, tabelaMaesNiver, tfNome, tfEndereco, tfTelefone, dpAniversario, btnSalvarMae, tabelaEncontros);
 	}
 	
 	
@@ -146,6 +188,13 @@ public class Homepage extends Application {
         dadosMaesNiver = FXCollections.observableArrayList(filtrada);
         tabelaMaesNiver.setItems(dadosMaesNiver);
     }
+	private void limparCamposMaes(TextField tfNome, TextField tfTelefone, TextField tfEndereco, DatePicker dpAniversario) {
+		tfNome.clear();
+		tfTelefone.clear();
+		tfEndereco.clear();
+		dpAniversario.setValue(null);
+	}
+	
 	private void carregarTabelaEncontros() {
 		List<Encontro> todos = encontroDAO.listAll();
 		
