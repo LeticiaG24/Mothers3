@@ -90,6 +90,9 @@ public class TelaDetalhesEncontro {
 		        
 		    } else {
 		        try {
+		        	if(cbStatus.getValue()==null) {
+		        		cbStatus.setValue(encontro.getStatus());
+		        	}
 		            encontro.setStatus(cbStatus.getValue());
 		            lblStatus.setText("Status: " + encontro.getStatus());
 		            lblStatus.setVisible(true);
