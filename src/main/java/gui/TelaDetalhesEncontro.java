@@ -3,6 +3,7 @@ package gui;
 import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import dao.MaeDAO;
 import dao.RelDAO;
@@ -10,11 +11,15 @@ import dao.ServicoDAO;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import model.Encontro;
 import model.Mae;
 import model.Rel;
@@ -35,6 +40,7 @@ public class TelaDetalhesEncontro {
     // Tabela de serviços do encontro
     private TableView<Rel> tabelaRel;
     private ObservableList<Rel> dadosRel;
+    
     
     public TelaDetalhesEncontro(Encontro encontro) {
         this.encontro = encontro;
@@ -62,7 +68,67 @@ public class TelaDetalhesEncontro {
         Button btnExportar = new Button("Exportar relatório");
         btnExportar.setOnAction(e -> exportarRelatorio());
         
-        root.getChildren().addAll(lblData, lblStatus, tabelaRel, btnExportar);
+        //Cadastrar relação
+        ComboBox<Servico> cbServico = new ComboBox<>();
+        cbServico.setEditable(true);
+        cbServico.setItems(FXCollections.observableArrayList(servicoDAO.listAll()));
+        cbServico.setPromptText("Selecione um serviço");
+        cbServico.setPrefWidth(250);
+        cbServico.getEditor().getStyleClass().add("input");
+        cbServico.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(cbServico, Priority.ALWAYS);
+		cbServico.setConverter(new StringConverter<Servico>() {
+		    @Override
+		    public String toString(Servico servico) {
+		        return (servico == null) ? "" : servico.getNome();
+		    }
+
+		    @Override
+		    public Servico fromString(String string) {
+		        return cbServico.getItems()
+		                .stream()
+		                .filter(c -> c.getNome().equalsIgnoreCase(string))
+		                .findFirst()
+		                .orElse(null);
+		    }
+		});
+		
+		ComboBox<Mae> cbMae = new ComboBox<>();
+		cbMae.setEditable(true);
+		cbMae.setItems(FXCollections.observableArrayList(maeDAO.listAll()));
+		cbMae.setPromptText("Selecione uma mãe");
+		cbMae.setPrefWidth(250);
+		cbMae.getEditor().getStyleClass().add("input");
+		cbMae.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(cbMae, Priority.ALWAYS);
+		cbMae.setConverter(new StringConverter<Mae>() {
+		    @Override
+		    public String toString(Mae mae) {
+		        return (mae == null) ? "" : mae.getNome();
+		    }
+
+		    @Override
+		    public Mae fromString(String string) {
+		        return cbMae.getItems()
+		                .stream()
+		                .filter(c -> c.getNome().equalsIgnoreCase(string))
+		                .findFirst()
+		                .orElse(null);
+		    }
+		});
+		
+		Button btnCadastrar = new Button("Cadastrar");
+		btnCadastrar.setOnAction(e -> {
+            Servico servicoSelecionado = cbServico.getValue();
+            Mae maeSelecionada = cbMae.getValue();
+
+            Rel novo = new Rel(maeSelecionada.getId(), servicoSelecionado.getId(), encontro.getId());
+            relDAO.insert(novo);
+            carregarTabelaRel();
+            limparCampos(cbServico, cbMae);
+        });
+        
+        root.getChildren().addAll(lblData, lblStatus, tabelaRel, btnExportar, cbServico, cbMae, btnCadastrar);
 
         Scene scene = new Scene(root, 600, 400);
         stage.setScene(scene);
@@ -95,13 +161,14 @@ public class TelaDetalhesEncontro {
     }
     
     private void carregarTabelaRel() {
-        // Filtra as relações pelo ID do encontro
-        dadosRel = FXCollections.observableArrayList(
-            relDAO.listAll().stream()
+    	List<Rel> todos = relDAO.listAll();
+    	
+        List<Rel> filtrada = todos.stream()
                 .filter(rel -> rel.getIdEncontro() == encontro.getId())
-                .collect(java.util.stream.Collectors.toList())
-        );
-        tabelaRel.setItems(dadosRel);
+                .collect(java.util.stream.Collectors.toList());
+        
+        dadosRel = FXCollections.observableArrayList(filtrada);
+		tabelaRel.setItems(dadosRel);
     }
     
     private void exportarRelatorio() {
@@ -123,6 +190,12 @@ public class TelaDetalhesEncontro {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private void limparCampos(ComboBox<Servico> cbServico, ComboBox<Mae> cbMae) {
+    	cbServico.setValue(null);
+        cbServico.getEditor().clear();
+        cbMae.setValue(null);
+        cbMae.getEditor().clear();
     }
     
     public void fechar() {
