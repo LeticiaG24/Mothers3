@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import dao.EncontroDAO;
 import dao.MaeDAO;
 import dao.RelDAO;
 import dao.ServicoDAO;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -17,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -36,6 +39,7 @@ public class TelaDetalhesEncontro {
     private MaeDAO maeDAO;
     private RelDAO relDAO;
     private ServicoDAO servicoDAO;
+    private EncontroDAO encontroDAO;
     
     // Tabela de serviços do encontro
     private TableView<Rel> tabelaRel;
@@ -48,6 +52,7 @@ public class TelaDetalhesEncontro {
         this.maeDAO = new MaeDAO();
         this.relDAO = new RelDAO();
         this.servicoDAO = new ServicoDAO();
+        this.encontroDAO = new EncontroDAO();
     }
     
     public void mostrar() {
@@ -61,6 +66,43 @@ public class TelaDetalhesEncontro {
         Label lblData = new Label("Data: " + encontro.getData());
         Label lblStatus = new Label("Status: " + encontro.getStatus());
         
+        ComboBox<String> cbStatus = new ComboBox<>();
+        ObservableList<String> options = FXCollections.observableArrayList(
+				"Em breve", "Concluído", "Cancelado");
+		cbStatus.setItems(options);
+		cbStatus.getStyleClass().add("input");
+        cbStatus.setPromptText(encontro.getStatus());
+        cbStatus.setPrefWidth(250);
+        cbStatus.setMaxWidth(Double.MAX_VALUE);
+		GridPane.setHgrow(cbStatus, Priority.ALWAYS);
+		
+		StackPane statusContainer = new StackPane();
+		statusContainer.getChildren().addAll(lblStatus, cbStatus);
+		cbStatus.setVisible(false);
+		StackPane.setAlignment(lblStatus, Pos.CENTER_LEFT);
+		
+		Button btnEditarSalvar = new Button("Editar");
+		btnEditarSalvar.setOnAction(e -> {
+		    if (btnEditarSalvar.getText().equals("Editar")) {
+		        lblStatus.setVisible(false);
+		        cbStatus.setVisible(true);
+		        btnEditarSalvar.setText("Salvar");
+		        
+		    } else {
+		        try {
+		            encontro.setStatus(cbStatus.getValue());
+		            lblStatus.setText("Status: " + encontro.getStatus());
+		            lblStatus.setVisible(true);
+		            cbStatus.setVisible(false);
+		            btnEditarSalvar.setText("Editar");
+		            encontroDAO.update(encontro);
+		        } catch (Exception ex) {
+		            System.out.println("Erro ao salvar: " + ex.getMessage());
+		        }
+		    }
+		});
+        
+		
         // Configuração da tabela de relações (serviços x mães)
         configurarTabelaRel();
         
@@ -128,7 +170,7 @@ public class TelaDetalhesEncontro {
             limparCampos(cbServico, cbMae);
         });
         
-        root.getChildren().addAll(lblData, lblStatus, tabelaRel, btnExportar, cbServico, cbMae, btnCadastrar);
+        root.getChildren().addAll(lblData, statusContainer, btnEditarSalvar, tabelaRel, btnExportar, cbServico, cbMae, btnCadastrar);
 
         Scene scene = new Scene(root, 600, 400);
         stage.setScene(scene);

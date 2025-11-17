@@ -206,6 +206,7 @@ public class Homepage extends Application {
 			Encontro encontro = new Encontro(0, dpData.getValue(), cbStatus.getValue());
 			encontroDAO.insert(encontro);
 			carregarTabelaEncontros();
+			carregarTabelaEncontrosAnt();
 			limparCamposEvento(dpData, cbStatus);
 		});
 		
@@ -253,6 +254,13 @@ public class Homepage extends Application {
 		List<Encontro> filtrada = todos.stream()
 				.filter(o -> o.getData().isBefore(LocalDate.now()))
 				.collect(Collectors.toList());
+		
+		for(Encontro e:filtrada) {
+			if(e.getStatus().equals("Em breve")) {
+				e.setStatus("Concluído");
+				encontroDAO.update(e);
+			}
+		}
 		
 		dadosEncontrosAnt = FXCollections.observableArrayList(filtrada);
 		tabelaEncontrosAnt.setItems(dadosEncontrosAnt);
