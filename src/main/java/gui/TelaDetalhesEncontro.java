@@ -105,8 +105,6 @@ public class TelaDetalhesEncontro {
 		    }
 		});
         
-		
-        // Configuração da tabela de relações (serviços x mães)
         configurarTabelaRel();
         
         // Botão para exportar relatório

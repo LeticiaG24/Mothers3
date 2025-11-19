@@ -42,4 +42,5 @@ VALUES ('Música', 'Responsável por preparar e conduzir os momentos musicais do
  ('Sorteio das flores', 'Atividade recreativa e simbólica em que flores são sorteadas entre as participantes, proporcionando um gesto de carinho, alegria e confraternização.'), 
  ('Encerramento', 'Finalização do encontro com avisos, agradecimentos e uma breve oração, concluindo o momento de forma organizada e acolhedora.'), 
  ('Arrumação capela', 'Serviço dedicado à organização e limpeza da capela após o encontro, deixando o espaço em ordem e com respeito ao ambiente sagrado.'), 
- ('Queima dos pedidos', 'Momento simbólico em que os pedidos escritos pelas mães são apresentados a Deus e queimados, representando entrega, fé e confiança na providência divina.');
+ ('Queima dos pedidos', 'Momento simbólico em que os pedidos escritos pelas mães são apresentados a Deus e queimados, representando entrega, fé e confiança na providência divina.'),
+ ('Compra das flores', 'Prepara com delicadeza os detalhes do encontro');

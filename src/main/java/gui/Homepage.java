@@ -348,6 +348,11 @@ public class Homepage extends Application {
 	    telaDetalhes.mostrar();
 	}
 	
+	private void abrirTelaServicos(String botaoServico) {
+		TelaServicos telaServicos = new TelaServicos(botaoServico);
+	    telaServicos.mostrar();
+	}
+	
 	public static void main (String[]args) {
 		launch(args);
 	}
