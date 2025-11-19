@@ -21,9 +21,15 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.Encontro;
@@ -49,9 +55,74 @@ public class Homepage extends Application {
 	
 	public void start(Stage stage) {
 		
-		//Criando a cena
-		VBox raiz = new VBox();
+		//Image logoImg = new Image("file:");
+		//ImageView logoImageView = new ImageView(logoImg);
+		
+		Button motherBtn = new Button("Mães");
+		motherBtn.setId("motherBtn");
+		
+		Button datesBtn = new Button("Encontros");
+		datesBtn.setId("datesBtn");
+		
+		Button servicesBtn = new Button("Serviços");
+		servicesBtn.setId("servicesBtn");
+		
+		Button reportsBtn = new Button("Relatório");
+		reportsBtn.setId("reportsBtn");
+		
+		Button logoutBtn = new Button("Sair");
+		logoutBtn.setId("logoutBtn");
+		
+		HBox navBar = new HBox(motherBtn, datesBtn, servicesBtn, reportsBtn, logoutBtn); 
+		
+		Image headerImg = new Image("file:C:/Users/Fatec/Downloads/header_img.png");
+		ImageView headerImageView = new ImageView(headerImg);
+		
+		Text headerText = new Text("Bem-vinda ao nosso grupo de encontros!");
+		headerText.setId("headerText");
+		
+		Text introText1 = new Text("O sistema Mães que Oram pelos Filhos nasceu para acolher e organizar\r\n" + "com carinho os encontros desse grupo de fé.");
+		introText1.setId("introText1");
+		
+		Text introText2 = new Text("Aqui, cada oração, serviço e momento especial é registrado com cuidado, \r\n" + "fortalecendo a união e a missão de cada mãe.");
+		introText2.setId("introText2");
+		
+		VBox introTextContainer = new VBox(introText1, introText2);
+		
+		Text servicesNavBarText = new Text("Nossos Serviços");
+		servicesNavBarText.setId("servicesNavBar");
+		
+		Image begginingImg = new Image("file:C:/Users/Fatec/Downloads/acolhida_img.png");
+		ImageView begginingImageView = new ImageView(begginingImg);
+		
+		HBox servicesNavBarImgContainer = new HBox(begginingImageView);
+		
+		headerImageView.setPreserveRatio(true);
+		headerImageView.setSmooth(true);
+		headerImageView.setCache(true);
+		
+		StackPane headerStack = new StackPane();
+		headerStack.getChildren().addAll(headerImageView, headerText);
+		
+		VBox content = new VBox(navBar, headerStack, introTextContainer, servicesNavBarText, servicesNavBarImgContainer);
+		
+		VBox raiz = new VBox(content);
 		Scene cena = new Scene(raiz, 800, 600);
+		
+		headerImageView.fitWidthProperty().bind(raiz.widthProperty());
+		headerImageView.fitHeightProperty().bind(raiz.heightProperty());
+		
+		begginingImageView.fitWidthProperty().bind(raiz.widthProperty().multiply(0.2)); // 20% da largura da janela
+		begginingImageView.fitHeightProperty().bind(begginingImageView.fitWidthProperty()); // quadrada para virar círculo
+		begginingImageView.setPreserveRatio(false);
+		
+		Circle clip1 = new Circle();
+		clip1.radiusProperty().bind(begginingImageView.fitWidthProperty().divide(2));
+		clip1.centerXProperty().bind(begginingImageView.fitWidthProperty().divide(2));
+		clip1.centerYProperty().bind(begginingImageView.fitHeightProperty().divide(2));
+
+		begginingImageView.setClip(clip1);
+		
 		stage.setTitle("Homepage");
         stage.setScene(cena);
         stage.setFullScreen(true);
