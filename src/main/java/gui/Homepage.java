@@ -128,7 +128,23 @@ public class Homepage extends Application {
         stage.setFullScreen(true);
         stage.setFullScreenExitHint("");
         stage.show();
-		
+        
+        //Botões serviços
+        Button btnInicioEncontro = new Button("Início do Encontro");
+        btnInicioEncontro.setOnAction((ActionEvent event) -> {
+            abrirTelaServicos("Início do encontro");
+        });
+        
+        Button btnMomentoFe = new Button("Momento de Fé");
+        btnMomentoFe.setOnAction((ActionEvent event) -> {
+        	abrirTelaServicos("Momento de fé");
+        });
+        
+        Button btnEncerramento = new Button("Encerramento e Oração");
+        btnEncerramento.setOnAction((ActionEvent event) -> {
+        	abrirTelaServicos("Encerramento e oração");
+        });
+        
         //Tabela mães
         tabelaMaes = new TableView<>();
         carregarTabelaMaes();
